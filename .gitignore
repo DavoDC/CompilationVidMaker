@@ -1,0 +1,13 @@
+# Visual Studio
+.vs/
+x64/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+Project/x64/
+
+# Runtime folders (not tracked — user populates these)
+FFMPEG/
+Clips/
+Output/
