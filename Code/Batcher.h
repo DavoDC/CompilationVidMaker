@@ -10,6 +10,10 @@
 // Target batch duration: 15 minutes
 static constexpr int TARGET_BATCH_SECONDS = 15 * 60;
 
+// Minimum batch duration to bother encoding — batches shorter than this are skipped
+// Default: 10 minutes. Avoids generating tiny leftover batches.
+static constexpr int MIN_BATCH_SECONDS = 10 * 60;
+
 /**
  * @brief A batch of clips whose total duration is ~15 minutes.
 */
