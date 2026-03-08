@@ -60,6 +60,8 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)..\..\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

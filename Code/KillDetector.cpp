@@ -36,7 +36,7 @@ string KillDetector::detectTier(const string& filename) {
 bool KillDetector::containsCI(const string& source, const string& query) {
     string srcLower = source;
     string qLower = query;
-    transform(srcLower.begin(), srcLower.end(), srcLower.begin(), ::tolower);
-    transform(qLower.begin(), qLower.end(), qLower.begin(), ::tolower);
+    transform(srcLower.begin(), srcLower.end(), srcLower.begin(), [](unsigned char c) { return (char)::tolower(c); });
+    transform(qLower.begin(), qLower.end(), qLower.begin(), [](unsigned char c) { return (char)::tolower(c); });
     return srcLower.find(qLower) != string::npos;
 }

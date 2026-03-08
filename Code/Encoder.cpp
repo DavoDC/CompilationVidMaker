@@ -85,7 +85,7 @@ string Encoder::writeConcatList(const Batch& batch) {
 
 bool Encoder::checkNvenc() {
     // ffmpeg -encoders 2>/dev/null | grep nvenc
-    Command cmd(ffmpegPath, { "-encoders" });
+    Command cmd(ffmpegPath, StringV{ "-encoders" });
     cmd.run();
     return contains(cmd.getOutput(), "h264_nvenc");
 }

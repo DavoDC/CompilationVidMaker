@@ -23,7 +23,7 @@ ClipList::ClipList(const string& clipsPath, const string& ffprobePath) {
         if (!entry.is_regular_file()) continue;
         string ext = entry.path().extension().string();
         // Lowercase ext for comparison
-        transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+        transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return (char)::tolower(c); });
         if (find(VIDEO_EXTS.begin(), VIDEO_EXTS.end(), ext) != VIDEO_EXTS.end()) {
             clipPaths.push_back(entry.path());
         }

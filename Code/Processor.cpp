@@ -1,6 +1,7 @@
 // Processor.cpp
 
 #include "Processor.h"
+#include "Command.h"
 #include <chrono>
 
 using namespace std;
