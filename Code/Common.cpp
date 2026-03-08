@@ -36,7 +36,9 @@ void initLog(const string& logPath) {
     auto now = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(now);
     char buf[64];
-    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&t));
+    tm tmInfo{};
+    localtime_s(&tmInfo, &t);
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tmInfo);
     logRaw("=== CompilationVidMaker Log ===");
     logRaw("Started: " + string(buf));
     logRaw("Log file: " + logPath);
@@ -58,12 +60,6 @@ string getLogPath() {
 // ### Function Definitions
 
 // # Printing Functions
-
-// Internal: write to both console and log
-static void output(const string& s) {
-    cout << "\n" << s;
-    logRaw(s);
-}
 
 void print(const string& s, bool useEndl)
 {

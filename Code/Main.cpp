@@ -35,7 +35,9 @@ string makeLogPath() {
     auto now = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(now);
     char buf[32];
-    strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", localtime(&t));
+    tm tmInfo{};
+    localtime_s(&tmInfo, &t);
+    strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", &tmInfo);
     return string("logs\\run_") + buf + ".log";
 }
 
