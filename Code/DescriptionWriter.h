@@ -20,8 +20,9 @@ public:
 
     /**
      * @brief Write description file for a batch.
+     * @param charName Character name used in output filename.
     */
-    void write(const Batch& batch, const std::vector<KillEvent>& kills);
+    void write(const Batch& batch, const std::vector<KillEvent>& kills, const std::string& charName);
 
 private:
     std::string outputPath;

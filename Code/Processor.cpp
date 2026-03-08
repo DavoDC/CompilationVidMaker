@@ -21,45 +21,73 @@ void Processor::run() {
     string ffmpegPath  = exePath + "ffmpeg.exe";
     string ffprobePath = exePath + "ffprobe.exe";
 
-    // 1. Load clips
-    print("\n=== Step 1: Loading Clips ===");
-    ClipList clipList(clipsPath, ffprobePath);
-    if (clipList.getCount() == 0) {
-        printErr("No clips found in: " + clipsPath, true);
+    // Validate root clips path
+    if (!isPathValid(clipsPath)) {
+        printErr("Clips path not found: " + clipsPath, true);
     }
 
-    // 2. Batch into ~15min groups
-    print("\n=== Step 2: Batching ===");
-    Batcher batcher(clipList);
-    if (batcher.getCount() == 0) {
-        printErr("No batches created.", true);
+    // Create output folder if it doesn't exist
+    if (!isPathValid(outputPath)) {
+        fs::create_directories(outputPath);
+        print("Created output folder: " + outputPath);
     }
 
-    // 3. Process each batch
+    // Discover character subfolders (one level deep)
+    vector<fs::path> charFolders;
+    for (const auto& entry : fs::directory_iterator(clipsPath)) {
+        if (entry.is_directory()) {
+            charFolders.push_back(entry.path());
+        }
+    }
+    sort(charFolders.begin(), charFolders.end());
+
+    if (charFolders.empty()) {
+        // No subfolders — treat clipsPath itself as single character
+        charFolders.push_back(fs::path(clipsPath));
+    }
+
+    print("\nFound " + to_string(charFolders.size()) + " character folder(s).");
+
     Encoder encoder(ffmpegPath, outputPath);
     DescriptionWriter descWriter(outputPath);
 
-    int batchNum = 1;
-    for (const Batch& batch : batcher.getBatches()) {
-        print("\n=== Batch " + to_string(batchNum) + " of "
-            + to_string(batcher.getCount()) + " ===");
+    int totalBatches = 0;
 
-        // Detect kills
-        vector<KillEvent> kills = KillDetector::detect(batch);
-        if (!kills.empty()) {
-            print("Kill events detected: " + to_string(kills.size()));
-            for (const KillEvent& ev : kills) {
-                print("  " + ev.tier + " at " + to_string(ev.timestampSeconds) + "s — " + ev.clipName);
-            }
+    // Process each character folder independently
+    for (const fs::path& charPath : charFolders) {
+        string charName = charPath.filename().string();
+        print("\n============================");
+        print("Character: " + charName);
+        print("============================");
+
+        ClipList clipList(charPath.string(), ffprobePath);
+        if (clipList.getCount() == 0) {
+            print("No clips found, skipping.");
+            continue;
         }
 
-        // Encode
-        encoder.encode(batch);
+        Batcher batcher(clipList);
 
-        // Write description
-        descWriter.write(batch, kills);
+        int batchNum = 1;
+        for (const Batch& batch : batcher.getBatches()) {
+            print("\n--- " + charName + " Batch " + to_string(batchNum)
+                + " of " + to_string(batcher.getCount()) + " ---");
 
-        batchNum++;
+            vector<KillEvent> kills = KillDetector::detect(batch);
+            if (!kills.empty()) {
+                print("Kill events: " + to_string(kills.size()));
+                for (const KillEvent& ev : kills) {
+                    print("  " + ev.tier + " at " + to_string(ev.timestampSeconds)
+                        + "s — " + ev.clipName);
+                }
+            }
+
+            encoder.encode(batch, charName);
+            descWriter.write(batch, kills, charName);
+
+            batchNum++;
+            totalBatches++;
+        }
     }
 
     // Summary
@@ -67,7 +95,8 @@ void Processor::run() {
     double totalSecs = duration_cast<milliseconds>(stopTime - startTime).count() / 1000.0;
 
     print("\n=== Done ===");
-    print("Batches processed: " + to_string(batcher.getCount()));
+    print("Characters processed: " + to_string(charFolders.size()));
+    print("Total batches: " + to_string(totalBatches));
     print("Output folder: " + outputPath);
     print(Command::formatTimeTaken(totalSecs));
 }

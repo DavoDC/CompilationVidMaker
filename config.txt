@@ -1,0 +1,10 @@
+# CompilationVidMaker Configuration
+
+# Root folder containing character subfolders (e.g. THOR\, DR_S\)
+ClipsPath=C:\Users\David\Videos\MarvelRivals\Highlights
+
+# Output folder for encoded MP4s and description files
+OutputPath=C:\Users\David\Videos\MarvelRivals\Output
+
+# Folder containing ffmpeg.exe and ffprobe.exe
+FFMPEGPath=FFMPEG\

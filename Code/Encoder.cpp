@@ -17,10 +17,10 @@ Encoder::Encoder(const string& ffmpegPath, const string& outputPath)
     }
 }
 
-string Encoder::encode(const Batch& batch) {
+string Encoder::encode(const Batch& batch, const string& charName) {
 
-    string listFile = writeConcatList(batch);
-    string outFile = outputPath + "\\batch" + to_string(batch.batchNumber) + ".mp4";
+    string listFile = writeConcatList(batch, charName);
+    string outFile = outputPath + "\\" + charName + "_batch" + to_string(batch.batchNumber) + ".mp4";
 
     // Build ffmpeg args
     // -f concat -safe 0 -i list.txt
@@ -58,7 +58,7 @@ string Encoder::encode(const Batch& batch) {
         quoteD(outFile)
     });
 
-    print("\nEncoding batch " + to_string(batch.batchNumber) + "...");
+    print("\nEncoding " + charName + " batch " + to_string(batch.batchNumber) + "...");
     Command cmd(ffmpegPath, args);
     cmd.run(true);
     cmd.printTimeTaken();
@@ -67,8 +67,8 @@ string Encoder::encode(const Batch& batch) {
     return outFile;
 }
 
-string Encoder::writeConcatList(const Batch& batch) {
-    string listPath = outputPath + "\\batch" + to_string(batch.batchNumber) + "_concat.txt";
+string Encoder::writeConcatList(const Batch& batch, const string& charName) {
+    string listPath = outputPath + "\\" + charName + "_batch" + to_string(batch.batchNumber) + "_concat.txt";
     ofstream file(listPath);
 
     for (const Clip& clip : batch.clips) {

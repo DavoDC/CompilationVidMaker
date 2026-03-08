@@ -12,9 +12,9 @@ DescriptionWriter::DescriptionWriter(const string& outputPath)
 {
 }
 
-void DescriptionWriter::write(const Batch& batch, const vector<KillEvent>& kills) {
+void DescriptionWriter::write(const Batch& batch, const vector<KillEvent>& kills, const string& charName) {
 
-    string outFile = outputPath + "\\batch" + to_string(batch.batchNumber) + "_description.txt";
+    string outFile = outputPath + "\\" + charName + "_batch" + to_string(batch.batchNumber) + "_description.txt";
     ofstream file(outFile);
 
     if (!file.is_open()) {

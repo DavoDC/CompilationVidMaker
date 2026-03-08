@@ -20,9 +20,10 @@ public:
 
     /**
      * @brief Encode a batch into one output MP4.
+     * @param charName Character name used in output filename.
      * @return Path to the output file.
     */
-    std::string encode(const Batch& batch);
+    std::string encode(const Batch& batch, const std::string& charName);
 
 private:
     std::string ffmpegPath;
@@ -33,7 +34,7 @@ private:
      * @brief Write a concat list file for ffmpeg concat demuxer.
      * @return Path to the written list file.
     */
-    std::string writeConcatList(const Batch& batch);
+    std::string writeConcatList(const Batch& batch, const std::string& charName);
 
     /**
      * @brief Probe ffmpeg to check if h264_nvenc encoder is available.
